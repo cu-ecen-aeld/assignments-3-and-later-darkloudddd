@@ -4,6 +4,24 @@
 set -e
 set -u
 
+# Ensure cross‐compiler and build tools are present
+echo "Checking for aarch64-linux-gnu-gcc…"
+if ! command -v aarch64-linux-gnu-gcc >/dev/null 2>&1; then
+  echo "Installing cross-compiler and build dependencies…"
+  apt-get update
+  apt-get install -y \
+    gcc-aarch64-linux-gnu \
+    make \
+    bc \
+    bison \
+    flex \
+    libssl-dev \
+    libncurses5-dev \
+    libelf-dev \
+    wget \
+    cpio
+fi
+
 OUTDIR=/tmp/aeld
 KERNEL_REPO=git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
 KERNEL_VERSION=v5.15.163
