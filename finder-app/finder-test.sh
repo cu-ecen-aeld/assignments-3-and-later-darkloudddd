@@ -14,14 +14,6 @@ WRITESTR="This is a test string"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
-# Clean previous build artifacts
-echo "Cleaning previous build artifacts..."
-make clean || true
-
-# Compile writer application
-echo "Compiling writer application..."
-make
-
 # Ensure the writer app exists
 if [ ! -f "$WRITER_APP" ]; then
     echo "Error: writer binary not found after compilation!"
