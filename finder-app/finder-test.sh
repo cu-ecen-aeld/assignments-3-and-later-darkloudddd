@@ -1,31 +1,30 @@
 #!/bin/sh
 
-set -e  # Exit on any error
-set -u  # Treat unset variables as an error
+set -e
+set -u
 
-# Variables
-WRITER_APP="./writer"
-FINDER_APP="./finder.sh"
+WRITER=writer       # Should be installed in /usr/bin and in $PATH
+FINDER=finder       # Should be installed in /usr/bin and in $PATH
 TMP_DIR="/tmp/aesd_test"
 WRITEFILE="${TMP_DIR}/testfile.txt"
 WRITESTR="This is a test string"
+RESULTFILE="/tmp/assignment4-result.txt"
 
-# Move to the script directory
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-cd "$SCRIPT_DIR"
-
-# Ensure the writer app exists
-if [ ! -f "$WRITER_APP" ]; then
-    echo "Error: writer binary not found after compilation!"
+# Ensure writer is in PATH
+if ! command -v "$WRITER" >/dev/null 2>&1; then
+    echo "Error: writer not found in PATH."
     exit 1
 fi
 
-# Create test directory
-mkdir -p "$TMP_DIR"
+# Ensure finder is in PATH
+if ! command -v "$FINDER" >/dev/null 2>&1; then
+    echo "Error: finder not found in PATH."
+    exit 1
+fi
 
-# Use writer application instead of writer.sh
-echo "Running writer application..."
-"$WRITER_APP" "$WRITEFILE" "$WRITESTR"
+# Create test directory and write file
+mkdir -p "$TMP_DIR"
+"$WRITER" "$WRITEFILE" "$WRITESTR"
 
 # Validate file content
 if [ ! -f "$WRITEFILE" ]; then
@@ -39,16 +38,8 @@ if [ "$READSTR" != "$WRITESTR" ]; then
     exit 1
 fi
 
-echo "Test passed: writer successfully created and wrote to the file."
-
-# Run finder.sh (if applicable)
-if [ -f "$FINDER_APP" ]; then
-    echo "Running finder.sh..."
-    "$FINDER_APP" "$TMP_DIR" "$WRITESTR"
-else
-    echo "Warning: finder.sh not found. Skipping finder test."
-fi
+# Run finder, output to result file
+"$FINDER" "$TMP_DIR" "$WRITESTR" > "$RESULTFILE"
 
 echo "All tests passed!"
 exit 0
-
